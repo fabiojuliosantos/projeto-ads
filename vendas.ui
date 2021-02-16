@@ -20,8 +20,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>40</y>
+      <x>320</x>
+      <y>10</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>150</y>
+      <y>160</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -61,7 +61,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>150</y>
+      <y>160</y>
       <width>111</width>
       <height>32</height>
      </rect>
@@ -81,8 +81,8 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>110</y>
+      <x>160</x>
+      <y>100</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -101,8 +101,8 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLineEdit" name="lineEdit_2">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>110</y>
+      <x>300</x>
+      <y>100</y>
       <width>241</width>
       <height>32</height>
      </rect>
@@ -123,7 +123,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>190</y>
+      <y>200</y>
       <width>111</width>
       <height>32</height>
      </rect>
@@ -144,7 +144,7 @@ color:rgb(0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>190</y>
+      <y>200</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -177,16 +177,17 @@ color:rgb(0,0,0);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true">background-color: rgb(255, 255, 255);
+color: rgb(0, 0, 0);</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButton_3">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>240</y>
-      <width>101</width>
-      <height>41</height>
+      <x>550</x>
+      <y>100</y>
+      <width>51</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="font">
@@ -203,12 +204,12 @@ color:rgb(0,0,0);</string>
      <string>Ok</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>620</y>
-      <width>191</width>
+      <x>120</x>
+      <y>240</y>
+      <width>101</width>
       <height>41</height>
      </rect>
     </property>
@@ -223,8 +224,54 @@ color:rgb(0,0,0);</string>
      <string notr="true">background-color: rgb(108, 92, 231)</string>
     </property>
     <property name="text">
-     <string>Gerar PDF</string>
+     <string>Enviar</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>620</y>
+      <width>381</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton_4">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(108, 92, 231)</string>
+       </property>
+       <property name="text">
+        <string>Finalizar compra</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(108, 92, 231)</string>
+       </property>
+       <property name="text">
+        <string>Gerar PDF</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

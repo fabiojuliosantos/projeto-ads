@@ -1,12 +1,20 @@
+import sqlite3
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
+from reportlab.pdfgen import canvas
 
-import sqlite3
+subtotal_geral = 0
+
 conexao = sqlite3.connect("produtos.db")
 cursor = conexao.cursor()
 
 
+def chama_principal():
+    principal.show()
+
+
 def chama_cadastro():
+    # principal.close()
     cadastro.show()
 
 
@@ -38,6 +46,7 @@ def ecluir_produtos():
     vetor_produtos = cursor.fetchall()
     codigo_produto = vetor_produtos[produto_selec][0]
     cursor.execute("DELETE FROM produtos WHERE codigo="+str(codigo_produto))
+    conexao.commit()
 
 
 def editar_produtos():
@@ -54,7 +63,13 @@ def editar_produtos():
     editar_menu.lineEdit_2.setText(str(produto_editado[0][1]))
     editar_menu.lineEdit_3.setText(str(produto_editado[0][2]))
     editar_menu.lineEdit_4.setText(str(produto_editado[0][3]))
-    print(produto_editado)
+
+    '''codigo = editar_menu.lineEdit.text()
+    nome = editar_menu.lineEdit_2.text()
+    quantidade = editar_menu.lineEdit_3.text()
+    preco = editar_menu.lineEdit_4.text()
+    cursor.execute("UPDATE produtos SET (codigo = ?,nome = ?, quantidade = ?,preco = ?) WHERE codigo="+str(codigo_produto)",
+                   codigo, nome, quantidade, preco)'''
 
 
 def entrada():
@@ -83,6 +98,42 @@ def entrada():
                 i, j, QtWidgets.QTableWidgetItem(str(produtos[i][j])))
 
 
+def cliente_vendas():
+    nome_cliente = vendas.lineEdit_2.text()
+    cliente = "***Devlink Informática*** \n Cliente: " + \
+        str(nome_cliente) + \
+        "\n------------------------------------------------"
+    vendas.listWidget.addItem(cliente)
+    vendas.lineEdit_2.setText('')
+
+
+def vendas_produtos():
+    global subtotal_geral
+    codigo_produto = vendas.lineEdit.text()
+    quantidade = vendas.lineEdit_3.text()
+    cursor.execute("SELECT * FROM produtos WHERE codigo="+str(codigo_produto))
+    produto_saida = cursor.fetchall()
+    produto_vendas = produto_saida[0][1]
+    valor_produto = produto_saida[0][3]
+    subtotal_produto = valor_produto * float(quantidade)
+    subtotal_geral = subtotal_geral + subtotal_produto
+    venda = "Produto: " + produto_vendas + \
+        "\n Quantidade: " + str(quantidade) + \
+        "\nValor Unitário: "+str(valor_produto) +\
+        "\n Valor Produtos: "+str(subtotal_produto) +\
+        "\n-------------------------------------------------"
+    vendas.listWidget.addItem(venda)
+    vendas.lineEdit.setText('')
+    vendas.lineEdit_3.setText('')
+
+
+'''def finaliza_compra():
+    global subtotal_geral
+
+    subtotal = "Valor total: " + subtotal_geral
+    vendas.listWidget.addItem(subtotal)'''
+
+
 app = QtWidgets.QApplication([])
 cadastro = uic.loadUi('cadastro_produtos.ui')
 editar = uic.loadUi('editar_produtos.ui')
@@ -97,6 +148,10 @@ editar.pushButton.clicked.connect(mostrar_produtos)
 editar.pushButton_2.clicked.connect(editar_produtos)
 editar.pushButton_3.clicked.connect(ecluir_produtos)
 cadastro.pushButton.clicked.connect(entrada)
+vendas.pushButton.clicked.connect(vendas_produtos)
+# vendas.pushButton_2.clicked.connect(gerar_pdf)
+vendas.pushButton_3.clicked.connect(cliente_vendas)
+# vendas.pushButton_4.clicked.connect(finaliza_compra)
 
 principal.show()
 app.exec()
