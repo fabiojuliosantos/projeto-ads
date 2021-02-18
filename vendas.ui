@@ -286,6 +286,8 @@ color: rgb(0, 0, 0);</string>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons/imagens.qrc"/>
+ </resources>
  <connections/>
 </ui>

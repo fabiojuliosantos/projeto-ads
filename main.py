@@ -127,11 +127,11 @@ def vendas_produtos():
     vendas.lineEdit_3.setText('')
 
 
-'''def finaliza_compra():
+def finaliza_compra():
     global subtotal_geral
-
+    subtotal_compras = str(subtotal_geral)
     subtotal = "Valor total: " + subtotal_geral
-    vendas.listWidget.addItem(subtotal)'''
+    vendas.listWidget.addItem(subtotal)
 
 
 app = QtWidgets.QApplication([])
@@ -151,7 +151,7 @@ cadastro.pushButton.clicked.connect(entrada)
 vendas.pushButton.clicked.connect(vendas_produtos)
 # vendas.pushButton_2.clicked.connect(gerar_pdf)
 vendas.pushButton_3.clicked.connect(cliente_vendas)
-# vendas.pushButton_4.clicked.connect(finaliza_compra)
+vendas.pushButton_4.clicked.connect(finaliza_compra)
 
 principal.show()
 app.exec()
