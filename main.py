@@ -49,13 +49,17 @@ def ecluir_produtos():
     conexao.commit()
 
 
-def editar_produtos():
+codigo_editar = 0
 
+
+def editar_produtos():
+    global codigo_editar
     produto_selec = editar.tableWidget.currentRow()
 
     cursor.execute("SELECT codigo FROM produtos")
     vetor_produtos = cursor.fetchall()
     codigo_produto = vetor_produtos[produto_selec][0]
+    codigo_editar = codigo_produto
     cursor.execute("SELECT * FROM produtos WHERE codigo="+str(codigo_produto))
     produto_editado = cursor.fetchall()
     editar_menu.show()
@@ -64,12 +68,17 @@ def editar_produtos():
     editar_menu.lineEdit_3.setText(str(produto_editado[0][2]))
     editar_menu.lineEdit_4.setText(str(produto_editado[0][3]))
 
-    '''codigo = editar_menu.lineEdit.text()
+
+def atualiza_produtos():
+    global codigo_editar
+    codigo = editar_menu.lineEdit.text()
     nome = editar_menu.lineEdit_2.text()
     quantidade = editar_menu.lineEdit_3.text()
     preco = editar_menu.lineEdit_4.text()
-    cursor.execute("UPDATE produtos SET (codigo = ?,nome = ?, quantidade = ?,preco = ?) WHERE codigo="+str(codigo_produto)",
-                   codigo, nome, quantidade, preco)'''
+    cursor.execute("UPDATE produtos SET codigo = ?, nome =?, quantidade = ?, preco = ? WHERE codigo="+str(codigo_editar),
+                   (codigo, nome, quantidade, preco))
+    conexao.commit()
+    editar_menu.close()
 
 
 def entrada():
@@ -100,8 +109,7 @@ def entrada():
 
 def cliente_vendas():
     nome_cliente = vendas.lineEdit_2.text()
-    cliente = "***Devlink Informática*** \n Cliente: " + \
-        str(nome_cliente) + \
+    cliente = "***Devlink Informática*** \n Cliente: "+str(nome_cliente) + \
         "\n------------------------------------------------"
     vendas.listWidget.addItem(cliente)
     vendas.lineEdit_2.setText('')
@@ -116,21 +124,23 @@ def vendas_produtos():
     produto_vendas = produto_saida[0][1]
     valor_produto = produto_saida[0][3]
     subtotal_produto = valor_produto * float(quantidade)
-    subtotal_geral = subtotal_geral + subtotal_produto
+    subtotal_geral = round(subtotal_geral + subtotal_produto, 2)
     venda = "Produto: " + produto_vendas + \
         "\n Quantidade: " + str(quantidade) + \
-        "\nValor Unitário: "+str(valor_produto) +\
-        "\n Valor Produtos: "+str(subtotal_produto) +\
+        "\nValor Unitário: R$"+str(valor_produto).replace(".", ",") + \
+        "\n Valor Produtos: R$"+str(subtotal_produto).replace(".", ",") + \
         "\n-------------------------------------------------"
     vendas.listWidget.addItem(venda)
     vendas.lineEdit.setText('')
     vendas.lineEdit_3.setText('')
+    vendas1 = vendas.listWidget
+    print(vendas1)
 
 
 def finaliza_compra():
     global subtotal_geral
-    subtotal_compras = str(subtotal_geral)
-    subtotal = "Valor total: " + subtotal_geral
+    subtotal_compras = str(subtotal_geral).replace(".", ",")
+    subtotal = "Valor total: R$" + subtotal_compras
     vendas.listWidget.addItem(subtotal)
 
 
@@ -147,6 +157,7 @@ principal.pushButton_3.clicked.connect(chama_vendas)
 editar.pushButton.clicked.connect(mostrar_produtos)
 editar.pushButton_2.clicked.connect(editar_produtos)
 editar.pushButton_3.clicked.connect(ecluir_produtos)
+editar_menu.pushButton_2.clicked.connect(atualiza_produtos)
 cadastro.pushButton.clicked.connect(entrada)
 vendas.pushButton.clicked.connect(vendas_produtos)
 # vendas.pushButton_2.clicked.connect(gerar_pdf)
