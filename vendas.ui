@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background-color:rgb(116,185,255)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -22,7 +22,7 @@
      <rect>
       <x>320</x>
       <y>10</y>
-      <width>181</width>
+      <width>191</width>
       <height>31</height>
      </rect>
     </property>
@@ -198,7 +198,7 @@ color: rgb(0, 0, 0);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background-color: rgb(108, 92, 231)</string>
     </property>
     <property name="text">
      <string>Ok</string>
@@ -221,7 +221,7 @@ color: rgb(0, 0, 0);</string>
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">background-color: rgb(108, 92, 231)</string>
     </property>
     <property name="text">
      <string>Enviar</string>
@@ -272,6 +272,29 @@ color: rgb(0, 0, 0);</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="pushButton_5">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>300</y>
+      <width>187</width>
+      <height>39</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(108, 92, 231)</string>
+    </property>
+    <property name="text">
+     <string>Mostrar Produtos</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

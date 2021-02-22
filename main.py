@@ -4,6 +4,16 @@ from PyQt5.QtWidgets import QMessageBox
 from reportlab.pdfgen import canvas
 
 subtotal_geral = 0
+valor_pago = 0
+troco = 0
+
+clientes_pdf = []
+produto_pdf = []
+valor_produto_pdf = []
+quant_pdf = []
+num_produtos = 0
+sub_produto_pdf = []
+sub_pdf = 0
 
 conexao = sqlite3.connect("produtos.db")
 cursor = conexao.cursor()
@@ -24,6 +34,12 @@ def chama_editar():
 
 def chama_vendas():
     vendas.show()
+
+
+def chama_pagamento():
+    global subtotal_geral
+    pagamento.show()
+    pagamento.lineEdit.setText(str(subtotal_geral))
 
 
 def mostrar_produtos():
@@ -108,40 +124,112 @@ def entrada():
 
 
 def cliente_vendas():
+    global clientes_pdf
     nome_cliente = vendas.lineEdit_2.text()
     cliente = "***Devlink Informática*** \n Cliente: "+str(nome_cliente) + \
         "\n------------------------------------------------"
+    clientes_pdf.append(nome_cliente)
     vendas.listWidget.addItem(cliente)
     vendas.lineEdit_2.setText('')
 
 
 def vendas_produtos():
     global subtotal_geral
+    global valor_produto_pdf
+    global produto_pdf
+    global num_produtos
+    global quant_pdf
     codigo_produto = vendas.lineEdit.text()
     quantidade = vendas.lineEdit_3.text()
+    int_quant = int(quantidade)
     cursor.execute("SELECT * FROM produtos WHERE codigo="+str(codigo_produto))
     produto_saida = cursor.fetchall()
     produto_vendas = produto_saida[0][1]
+    quantidade_estoque = produto_saida[0][2]
     valor_produto = produto_saida[0][3]
+
     subtotal_produto = valor_produto * float(quantidade)
     subtotal_geral = round(subtotal_geral + subtotal_produto, 2)
+    valor_produto_pdf.append(str(subtotal_produto))
+    produto_pdf.append(str(produto_vendas))
+    quant_pdf.append(str(quantidade))
+    sub_produto_pdf.append(str(subtotal_produto))
     venda = "Produto: " + produto_vendas + \
         "\n Quantidade: " + str(quantidade) + \
         "\nValor Unitário: R$"+str(valor_produto).replace(".", ",") + \
         "\n Valor Produtos: R$"+str(subtotal_produto).replace(".", ",") + \
         "\n-------------------------------------------------"
     vendas.listWidget.addItem(venda)
+    num_produtos = num_produtos + 1
     vendas.lineEdit.setText('')
     vendas.lineEdit_3.setText('')
-    vendas1 = vendas.listWidget
-    print(vendas1)
+    print(num_produtos)
+    print(produto_pdf)
+    print(subtotal_geral)
+
+
+def consulta_produtos():
+    cursor.execute("SELECT * FROM produtos")
+    itens = cursor.fetchall()
+    produtos.tableWidget.setRowCount(len(itens))
+    produtos.tableWidget.setColumnCount(4)
+
+    for i in range(0, len(itens)):
+        for j in range(0, 4):
+            produtos.tableWidget.setItem(
+                i, j, QtWidgets.QTableWidgetItem(str(itens[i][j])))
+    produtos.show()
 
 
 def finaliza_compra():
     global subtotal_geral
-    subtotal_compras = str(subtotal_geral).replace(".", ",")
-    subtotal = "Valor total: R$" + subtotal_compras
-    vendas.listWidget.addItem(subtotal)
+    global valor_pago
+    global troco
+    valor_pago = float(pagamento.lineEdit_2.text())
+    troco = valor_pago - subtotal_geral
+    pagamento.lineEdit_3.setText(str(troco))
+    venda_1 = "Valor a ser pago: R$" + str(subtotal_geral) + \
+              "\n Valor Pago: R$" + str(valor_pago) + \
+              "\n Troco: R$" + str(troco)
+    vendas.listWidget.addItem(venda_1)
+
+
+def gerar_pdf():
+    global num_produtos
+    cont_pdf = 0
+    y = 0
+    pdf = canvas.Canvas("Compra.pdf")
+    pdf.setFont("Times-Bold", 10)
+    pdf.drawString(100, 800, "***DevLink Informática***")
+    pdf.drawString(100, 785, "Cliente: "'{}'.format(clientes_pdf[0]))
+    pdf.drawString(100, 775, "----------------------------------------")
+    for produto in produto_pdf:
+        y = y+10
+        pdf.drawString(
+            100, 770 - y, "Produto: "'{}'.format(produto_pdf[cont_pdf]))
+        y = y+10
+        pdf.drawString(
+            100, 770-y, "Valor do produto R$: "'{}'.format(valor_produto_pdf[cont_pdf]))
+        y = y+10
+        pdf.drawString(
+            100, 770 - y, "Quantidade: "'{}'.format(quant_pdf[cont_pdf]))
+        y = y+10
+        pdf.drawString(
+            100, 770 - y, "Subtotal: R$"'{}'.format(sub_produto_pdf[cont_pdf]))
+        y = y+10
+        pdf.drawString(100, 770 - y, "---------------------------------------")
+        cont_pdf = cont_pdf + 1
+        y_total = y
+    pdf.drawString(
+        100, 755 - y_total, "Total a pagar: R$ " '{}'.format(subtotal_geral))
+    pdf.drawString(100, 755 - (y_total + 10),
+                   "Valor pago: R$"'{}'.format(valor_pago))
+    pdf.drawString(100, 755 - (y_total + 20), "Troco: R$"'{}'.format(troco))
+    print(clientes_pdf)
+    print(produto_pdf)
+    print(valor_produto_pdf)
+    pdf.save()
+    vendas.listWidget.clear()
 
 
 app = QtWidgets.QApplication([])
@@ -150,6 +238,8 @@ editar = uic.loadUi('editar_produtos.ui')
 editar_menu = uic.loadUi('editar.ui')
 principal = uic.loadUi('principal.ui')
 vendas = uic.loadUi('vendas.ui')
+produtos = uic.loadUi('produtos.ui')
+pagamento = uic.loadUi('pagamento.ui')
 
 principal.pushButton.clicked.connect(chama_cadastro)
 principal.pushButton_2.clicked.connect(chama_editar)
@@ -160,9 +250,11 @@ editar.pushButton_3.clicked.connect(ecluir_produtos)
 editar_menu.pushButton_2.clicked.connect(atualiza_produtos)
 cadastro.pushButton.clicked.connect(entrada)
 vendas.pushButton.clicked.connect(vendas_produtos)
-# vendas.pushButton_2.clicked.connect(gerar_pdf)
+vendas.pushButton_2.clicked.connect(gerar_pdf)
 vendas.pushButton_3.clicked.connect(cliente_vendas)
-vendas.pushButton_4.clicked.connect(finaliza_compra)
+vendas.pushButton_4.clicked.connect(chama_pagamento)
+vendas.pushButton_5.clicked.connect(consulta_produtos)
+pagamento.pushButton_2.clicked.connect(finaliza_compra)
 
 principal.show()
 app.exec()
