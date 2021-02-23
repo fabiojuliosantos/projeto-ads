@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>715</height>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(116,185,255)</string>
+   <string notr="true">background-color: rgb(9, 132, 227);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>140</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -61,7 +61,7 @@
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>160</y>
+      <y>140</y>
       <width>111</width>
       <height>32</height>
      </rect>
@@ -82,7 +82,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>160</x>
-      <y>100</y>
+      <y>80</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -102,7 +102,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>100</y>
+      <y>80</y>
       <width>241</width>
       <height>32</height>
      </rect>
@@ -123,7 +123,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>190</x>
-      <y>200</y>
+      <y>180</y>
       <width>111</width>
       <height>32</height>
      </rect>
@@ -144,7 +144,7 @@ color:rgb(0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>200</y>
+      <y>180</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -164,7 +164,7 @@ color:rgb(0,0,0);</string>
     <property name="geometry">
      <rect>
       <x>350</x>
-      <y>181</y>
+      <y>161</y>
       <width>421</width>
       <height>431</height>
      </rect>
@@ -185,7 +185,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>100</y>
+      <y>80</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -208,7 +208,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>240</y>
+      <y>220</y>
       <width>101</width>
       <height>41</height>
      </rect>
@@ -231,7 +231,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>370</x>
-      <y>620</y>
+      <y>600</y>
       <width>381</width>
       <height>41</height>
      </rect>
@@ -277,7 +277,7 @@ color: rgb(0, 0, 0);</string>
     <property name="geometry">
      <rect>
       <x>80</x>
-      <y>300</y>
+      <y>280</y>
       <width>187</width>
       <height>39</height>
      </rect>
@@ -297,7 +297,8 @@ color: rgb(0, 0, 0);</string>
     </property>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -306,8 +307,37 @@ color: rgb(0, 0, 0);</string>
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionPrincipal"/>
+    <addaction name="actionAdicionar_Itens"/>
+    <addaction name="actionEditar_Itens"/>
+    <addaction name="actionVendas"/>
+   </widget>
+   <addaction name="menuMenu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionPrincipal">
+   <property name="text">
+    <string>Principal</string>
+   </property>
+  </action>
+  <action name="actionAdicionar_Itens">
+   <property name="text">
+    <string>Adicionar Itens</string>
+   </property>
+  </action>
+  <action name="actionEditar_Itens">
+   <property name="text">
+    <string>Editar Itens</string>
+   </property>
+  </action>
+  <action name="actionVendas">
+   <property name="text">
+    <string>Vendas</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="icons/imagens.qrc"/>

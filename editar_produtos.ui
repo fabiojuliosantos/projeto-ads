@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color:rgb(116,185,255)</string>
+   <string notr="true">background-color: rgb(9, 132, 227);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -169,7 +169,8 @@ color: rgb(0, 0, 0);</string>
     </column>
    </widget>
   </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -178,9 +179,40 @@ color: rgb(0, 0, 0);</string>
      <height>30</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuPrincipal">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <addaction name="actionPrincipal"/>
+    <addaction name="actionAdicionar_Itens"/>
+    <addaction name="actionEditar_Itens"/>
+    <addaction name="actionVendas"/>
+   </widget>
+   <addaction name="menuPrincipal"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionPrincipal">
+   <property name="text">
+    <string>Principal</string>
+   </property>
+  </action>
+  <action name="actionAdicionar_Itens">
+   <property name="text">
+    <string>Adicionar Itens</string>
+   </property>
+  </action>
+  <action name="actionEditar_Itens">
+   <property name="text">
+    <string>Editar Itens</string>
+   </property>
+  </action>
+  <action name="actionVendas">
+   <property name="text">
+    <string>Vendas</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons/imagens.qrc"/>
+ </resources>
  <connections/>
 </ui>

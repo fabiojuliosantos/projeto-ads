@@ -24,15 +24,17 @@ def chama_principal():
 
 
 def chama_cadastro():
-    # principal.close()
+    principal.close()
     cadastro.show()
 
 
 def chama_editar():
+    principal.close()
     editar.show()
 
 
 def chama_vendas():
+    principal.close()
     vendas.show()
 
 
@@ -70,6 +72,7 @@ codigo_editar = 0
 
 def editar_produtos():
     global codigo_editar
+
     produto_selec = editar.tableWidget.currentRow()
 
     cursor.execute("SELECT codigo FROM produtos")
@@ -145,27 +148,31 @@ def vendas_produtos():
     cursor.execute("SELECT * FROM produtos WHERE codigo="+str(codigo_produto))
     produto_saida = cursor.fetchall()
     produto_vendas = produto_saida[0][1]
-    quantidade_estoque = produto_saida[0][2]
+    quantidade_estoque = int(produto_saida[0][2])
     valor_produto = produto_saida[0][3]
 
-    subtotal_produto = valor_produto * float(quantidade)
-    subtotal_geral = round(subtotal_geral + subtotal_produto, 2)
-    valor_produto_pdf.append(str(subtotal_produto))
-    produto_pdf.append(str(produto_vendas))
-    quant_pdf.append(str(quantidade))
-    sub_produto_pdf.append(str(subtotal_produto))
-    venda = "Produto: " + produto_vendas + \
-        "\n Quantidade: " + str(quantidade) + \
-        "\nValor Unitário: R$"+str(valor_produto).replace(".", ",") + \
-        "\n Valor Produtos: R$"+str(subtotal_produto).replace(".", ",") + \
-        "\n-------------------------------------------------"
-    vendas.listWidget.addItem(venda)
-    num_produtos = num_produtos + 1
-    vendas.lineEdit.setText('')
-    vendas.lineEdit_3.setText('')
-    print(num_produtos)
-    print(produto_pdf)
-    print(subtotal_geral)
+    if int_quant > quantidade_estoque:
+        QMessageBox.about(vendas, "Erro", "Quantidade fora de estoque!")
+    else:
+        subtotal_produto = valor_produto * float(quantidade)
+        subtotal_geral = round(subtotal_geral + subtotal_produto, 2)
+        sub_produto_pdf.append(str(subtotal_produto))
+        produto_pdf.append(str(produto_vendas))
+        valor_produto_pdf.append(str(valor_produto))
+        quant_pdf.append(str(quantidade))
+        sub_produto_pdf.append(str(subtotal_produto))
+        venda = "Produto: " + produto_vendas + \
+            "\n Quantidade: " + str(quantidade) + \
+            "\nValor Unitário: R$"+str(valor_produto).replace(".", ",") + \
+            "\n Valor Produtos: R$"+str(subtotal_produto).replace(".", ",") + \
+            "\n-------------------------------------------------"
+        vendas.listWidget.addItem(venda)
+        num_produtos = num_produtos + 1
+        vendas.lineEdit.setText('')
+        vendas.lineEdit_3.setText('')
+        print(num_produtos)
+        print(produto_pdf)
+        print(subtotal_geral)
 
 
 def consulta_produtos():
@@ -185,17 +192,21 @@ def finaliza_compra():
     global subtotal_geral
     global valor_pago
     global troco
+    flt_sub = float(subtotal_geral)
     valor_pago = float(pagamento.lineEdit_2.text())
-    troco = valor_pago - subtotal_geral
-    pagamento.lineEdit_3.setText(str(troco))
-    venda_1 = "Valor a ser pago: R$" + str(subtotal_geral) + \
-              "\n Valor Pago: R$" + str(valor_pago) + \
-              "\n Troco: R$" + str(troco)
-    vendas.listWidget.addItem(venda_1)
+    if valor_pago < flt_sub:
+        QMessageBox.about(pagamento, "Erro",
+                          "Valor abaixo do que deve ser pago!")
+    else:
+        troco = valor_pago - subtotal_geral
+        pagamento.lineEdit_3.setText(str(troco))
+        venda_1 = "Valor a ser pago: R$" + str(subtotal_geral) + \
+                  "\n Valor Pago: R$" + str(valor_pago) + \
+                  "\n Troco: R$" + str(troco)
+        vendas.listWidget.addItem(venda_1)
 
 
 def gerar_pdf():
-    global num_produtos
     cont_pdf = 0
     y = 0
     pdf = canvas.Canvas("Compra.pdf")
@@ -232,6 +243,14 @@ def gerar_pdf():
     vendas.listWidget.clear()
 
 
+clientes_pdf = []
+produto_pdf = []
+valor_produto_pdf = []
+quant_pdf = []
+num_produtos = 0
+sub_produto_pdf = []
+sub_pdf = 0
+
 app = QtWidgets.QApplication([])
 cadastro = uic.loadUi('cadastro_produtos.ui')
 editar = uic.loadUi('editar_produtos.ui')
@@ -255,6 +274,14 @@ vendas.pushButton_3.clicked.connect(cliente_vendas)
 vendas.pushButton_4.clicked.connect(chama_pagamento)
 vendas.pushButton_5.clicked.connect(consulta_produtos)
 pagamento.pushButton_2.clicked.connect(finaliza_compra)
-
+editar.actionPrincipal.triggered.connect(chama_principal)
+editar.actionAdicionar_Itens.triggered.connect(chama_cadastro)
+editar.actionVendas.triggered.connect(chama_vendas)
+cadastro.actionPrincipal.triggered.connect(chama_principal)
+cadastro.actionEditar_Itens.triggered.connect(chama_editar)
+cadastro.actionVendas.triggered.connect(chama_vendas)
+vendas.actionPrincipal.triggered.connect(chama_principal)
+vendas.actionAdicionar_Itens.triggered.connect(chama_cadastro)
+vendas.actionEditar_Itens.triggered.connect(chama_editar)
 principal.show()
 app.exec()
