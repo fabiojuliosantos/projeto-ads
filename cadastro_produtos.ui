@@ -242,6 +242,9 @@ color:rgb(0,0,0);</string>
      <string notr="true">background-color: rgb(255, 255, 255);
 color: rgb(0, 0, 0);</string>
     </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+    </property>
     <column>
      <property name="text">
       <string>Código</string>

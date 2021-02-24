@@ -25,16 +25,24 @@ def chama_principal():
 
 def chama_cadastro():
     principal.close()
+    editar.close()
+    vendas.close()
+    mostrar_produtos_cadastro()
     cadastro.show()
 
 
 def chama_editar():
     principal.close()
+    vendas.close()
+    cadastro.close()
+    mostrar_produtos()
     editar.show()
 
 
 def chama_vendas():
     principal.close()
+    cadastro.close()
+    editar.close()
     vendas.show()
 
 
@@ -42,6 +50,28 @@ def chama_pagamento():
     global subtotal_geral
     pagamento.show()
     pagamento.lineEdit.setText(str(subtotal_geral))
+
+
+def limpa_dados():
+    clientes_pdf.clear()
+    produto_pdf.clear()
+    valor_produto_pdf.clear()
+    quant_pdf.clear()
+    sub_produto_pdf.clear()
+    sub_pdf = 0
+
+
+def mostrar_produtos_cadastro():
+    cursor.execute("SELECT * FROM produtos")
+    produtos = cursor.fetchall()
+
+    cadastro.tableWidget.setRowCount(len(produtos))
+    cadastro.tableWidget.setColumnCount(4)
+
+    for i in range(0, len(produtos)):
+        for j in range(0, 4):
+            cadastro.tableWidget.setItem(
+                i, j, QtWidgets.QTableWidgetItem(str(produtos[i][j])))
 
 
 def mostrar_produtos():
@@ -101,6 +131,7 @@ def atualiza_produtos():
 
 
 def entrada():
+
     codigo = cadastro.lineEdit.text()
     nome = cadastro.lineEdit_2.text()
     quantidade = cadastro.lineEdit_3.text()
@@ -113,17 +144,9 @@ def entrada():
     nome = cadastro.lineEdit_2.setText("")
     quantidade = cadastro.lineEdit_3.setText("")
     preco = cadastro.lineEdit_4.setText("")
-
     cursor.execute("SELECT * FROM produtos")
     produtos = cursor.fetchall()
-
-    cadastro.tableWidget.setRowCount(len(produtos))
-    cadastro.tableWidget.setColumnCount(4)
-
-    for i in range(0, len(produtos)):
-        for j in range(0, 4):
-            cadastro.tableWidget.setItem(
-                i, j, QtWidgets.QTableWidgetItem(str(produtos[i][j])))
+    mostrar_produtos_cadastro()
 
 
 def cliente_vendas():
@@ -153,6 +176,7 @@ def vendas_produtos():
 
     if int_quant > quantidade_estoque:
         QMessageBox.about(vendas, "Erro", "Quantidade fora de estoque!")
+
     else:
         subtotal_produto = valor_produto * float(quantidade)
         subtotal_geral = round(subtotal_geral + subtotal_produto, 2)
@@ -170,9 +194,6 @@ def vendas_produtos():
         num_produtos = num_produtos + 1
         vendas.lineEdit.setText('')
         vendas.lineEdit_3.setText('')
-        print(num_produtos)
-        print(produto_pdf)
-        print(subtotal_geral)
 
 
 def consulta_produtos():
@@ -209,7 +230,13 @@ def finaliza_compra():
 def gerar_pdf():
     cont_pdf = 0
     y = 0
-    pdf = canvas.Canvas("Compra.pdf")
+    global subtotal_geral
+    global valor_pago
+    global troco
+    subtotal_pdf = subtotal_geral
+    valor_pdf = valor_pago
+    troco_pdf = troco
+    pdf = canvas.Canvas("/home/fabio/Área de Trabalho/Compra.pdf")
     pdf.setFont("Times-Bold", 10)
     pdf.drawString(100, 800, "***DevLink Informática***")
     pdf.drawString(100, 785, "Cliente: "'{}'.format(clientes_pdf[0]))
@@ -231,25 +258,25 @@ def gerar_pdf():
         pdf.drawString(100, 770 - y, "---------------------------------------")
         cont_pdf = cont_pdf + 1
         y_total = y
-    pdf.drawString(
-        100, 755 - y_total, "Total a pagar: R$ " '{}'.format(subtotal_geral))
-    pdf.drawString(100, 755 - (y_total + 10),
-                   "Valor pago: R$"'{}'.format(valor_pago))
-    pdf.drawString(100, 755 - (y_total + 20), "Troco: R$"'{}'.format(troco))
-    print(clientes_pdf)
-    print(produto_pdf)
-    print(valor_produto_pdf)
+        pdf.drawString(
+            100, 755 - y_total, "Total a pagar: R$ " '{}'.format(subtotal_pdf))
+
+        pdf.drawString(100, 755 - (y_total + 10),
+                       "Valor pago: R$"'{}'.format(valor_pdf))
+
+        pdf.drawString(100, 755 - (y_total + 20),
+                       "Troco: R$"'{}'.format(troco_pdf))
+
     pdf.save()
+    limpa_dados()
+    subtotal_geral = 0
+    valor_pago = 0
+    troco = 0
     vendas.listWidget.clear()
+    pagamento.lineEdit.setText('')
+    pagamento.lineEdit_2.setText('')
+    pagamento.lineEdit_3.setText('')
 
-
-clientes_pdf = []
-produto_pdf = []
-valor_produto_pdf = []
-quant_pdf = []
-num_produtos = 0
-sub_produto_pdf = []
-sub_pdf = 0
 
 app = QtWidgets.QApplication([])
 cadastro = uic.loadUi('cadastro_produtos.ui')
