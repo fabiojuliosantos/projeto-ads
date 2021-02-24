@@ -124,7 +124,7 @@ def atualiza_produtos():
     nome = editar_menu.lineEdit_2.text()
     quantidade = editar_menu.lineEdit_3.text()
     preco = editar_menu.lineEdit_4.text()
-    cursor.execute("UPDATE produtos SET codigo = ?, nome =?, quantidade = ?, preco = ? WHERE codigo="+str(codigo_editar),
+    cursor.execute("UPDATE OR IGNORE produtos SET codigo = ?, nome =?, quantidade = ?, preco = ? WHERE codigo="+str(codigo_editar),
                    (codigo, nome, quantidade, preco))
     conexao.commit()
     editar_menu.close()
@@ -136,27 +136,36 @@ def entrada():
     nome = cadastro.lineEdit_2.text()
     quantidade = cadastro.lineEdit_3.text()
     preco = cadastro.lineEdit_4.text()
-
-    cursor.execute("INSERT INTO produtos(codigo,nome,quantidade,preco) VALUES(?,?,?,?)",
-                   (codigo, nome, quantidade, preco))
-    conexao.commit()
-    codigo = cadastro.lineEdit.setText("")
-    nome = cadastro.lineEdit_2.setText("")
-    quantidade = cadastro.lineEdit_3.setText("")
-    preco = cadastro.lineEdit_4.setText("")
-    cursor.execute("SELECT * FROM produtos")
-    produtos = cursor.fetchall()
-    mostrar_produtos_cadastro()
+    if codigo == '':
+        QMessageBox.about(cadastro, "Erro",
+                          "O campo não pode estar em branco!")
+    elif nome == '':
+        QMessageBox.about(cadastro, "Erro",
+                          "O campo não pode estar em branco!")
+    else:
+        cursor.execute("INSERT OR IGNORE INTO produtos(codigo,nome,quantidade,preco) VALUES(?,?,?,?)",
+                       (codigo, nome, quantidade, preco))
+        conexao.commit()
+        codigo = cadastro.lineEdit.setText("")
+        nome = cadastro.lineEdit_2.setText("")
+        quantidade = cadastro.lineEdit_3.setText("")
+        preco = cadastro.lineEdit_4.setText("")
+        cursor.execute("SELECT * FROM produtos")
+        produtos = cursor.fetchall()
+        mostrar_produtos_cadastro()
 
 
 def cliente_vendas():
     global clientes_pdf
     nome_cliente = vendas.lineEdit_2.text()
-    cliente = "***Devlink Informática*** \n Cliente: "+str(nome_cliente) + \
-        "\n------------------------------------------------"
-    clientes_pdf.append(nome_cliente)
-    vendas.listWidget.addItem(cliente)
-    vendas.lineEdit_2.setText('')
+    if nome_cliente == '':
+        QMessageBox.about(vendas, "Erro", "O Campo não pode estar em branco!")
+    else:
+        cliente = "***Devlink Informática*** \n Cliente: "+str(nome_cliente) + \
+            "\n------------------------------------------------"
+        clientes_pdf.append(nome_cliente)
+        vendas.listWidget.addItem(cliente)
+        vendas.lineEdit_2.setText('')
 
 
 def vendas_produtos():
@@ -167,12 +176,22 @@ def vendas_produtos():
     global quant_pdf
     codigo_produto = vendas.lineEdit.text()
     quantidade = vendas.lineEdit_3.text()
-    int_quant = int(quantidade)
-    cursor.execute("SELECT * FROM produtos WHERE codigo="+str(codigo_produto))
-    produto_saida = cursor.fetchall()
-    produto_vendas = produto_saida[0][1]
-    quantidade_estoque = int(produto_saida[0][2])
-    valor_produto = produto_saida[0][3]
+    if codigo_produto == '':
+        QMessageBox.about(
+            vendas, "Erro", "O Campo não pode estar em branco!!!")
+        return
+    elif quantidade == '':
+        QMessageBox.about(
+            vendas, "Erro", "O Campo não pode estar em branco!!!")
+        return
+    else:
+        int_quant = int(quantidade)
+        cursor.execute("SELECT * FROM produtos WHERE codigo=" +
+                       str(codigo_produto))
+        produto_saida = cursor.fetchall()
+        produto_vendas = produto_saida[0][1]
+        quantidade_estoque = int(produto_saida[0][2])
+        valor_produto = produto_saida[0][3]
 
     if int_quant > quantidade_estoque:
         QMessageBox.about(vendas, "Erro", "Quantidade fora de estoque!")
@@ -257,15 +276,13 @@ def gerar_pdf():
         y = y+10
         pdf.drawString(100, 770 - y, "---------------------------------------")
         cont_pdf = cont_pdf + 1
-        y_total = y
-        pdf.drawString(
-            100, 755 - y_total, "Total a pagar: R$ " '{}'.format(subtotal_pdf))
-
-        pdf.drawString(100, 755 - (y_total + 10),
-                       "Valor pago: R$"'{}'.format(valor_pdf))
-
-        pdf.drawString(100, 755 - (y_total + 20),
-                       "Troco: R$"'{}'.format(troco_pdf))
+    y_total = y
+    pdf.drawString(100, 755 - y_total,
+                   "Total a pagar: R$ " '{}'.format(subtotal_pdf))
+    pdf.drawString(100, 755 - (y_total + 10),
+                   "Valor pago: R$"'{}'.format(valor_pdf))
+    pdf.drawString(100, 755 - (y_total + 20),
+                   "Troco: R$"'{}'.format(troco_pdf))
 
     pdf.save()
     limpa_dados()
